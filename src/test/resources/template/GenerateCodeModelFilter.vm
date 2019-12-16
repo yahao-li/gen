@@ -1,0 +1,24 @@
+package ${voPath};
+import java.util.List;
+import lombok.Data;
+import com.lenovo.sciv4.commons.frameworks.model.vo.FilterVo;
+
+/**
+* Create by  ${author} ${date}
+*/
+@Data
+public class ${className}Filter{
+
+   private List<FilterVo> filter;
+   private Integer pageSize;
+   private Integer pageNum;
+   private Integer start;
+
+   public Integer getStart() {
+      if(pageSize != null && pageNum != null){
+         return (pageNum - 1) * pageSize;
+      }
+      return null;
+   }
+
+}

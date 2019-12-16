@@ -1,0 +1,13 @@
+package ${servicePath};
+
+import ${modelPath}.${className};
+import com.centit.core.service.BaseService;
+
+/**
+* @author : ${author}
+* @date: ${date}
+* @Description: XXX接口
+*/
+public interface ${className}Service extends BaseService<${className},String> {
+
+}

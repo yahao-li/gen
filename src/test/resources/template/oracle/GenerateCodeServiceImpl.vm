@@ -1,0 +1,29 @@
+package ${serviceImpPath};
+
+import ${modelPath}.${className};
+import ${modelPath}.${className}Filter;
+import ${mapperPath}.${className}Mapper;
+import ${servicePath}.${className}Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.lenovo.sciv4.commons.frameworks.model.vo.FilterVo;
+
+
+import java.util.List;
+
+@Service
+public class ${className}ServiceImpl implements ${className}Service {
+
+    @Autowired
+    private ${className}Mapper ${tableName}Mapper;
+
+    @Override
+    public List<${className}> selectByFilter(${className}Filter ${tableName}Filter) {
+        return ${tableName}Mapper.selectByFilter(${tableName}Filter.getFilter(), (${tableName}Filter.getPageNum()-1)*${tableName}Filter.getPageSize(), ${tableName}Filter.getPageSize());
+    }
+
+    @Override
+    public Long countByFilter(${className}Filter ${tableName}Filter) {
+        return ${tableName}Mapper.countByFilter(${tableName}Filter.getFilter());
+    }
+}

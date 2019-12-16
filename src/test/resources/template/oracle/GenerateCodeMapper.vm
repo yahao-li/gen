@@ -1,0 +1,16 @@
+package ${mapperPath};
+
+import ${modelPath}.${className};
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import com.lenovo.sciv4.commons.frameworks.model.vo.FilterVo;
+
+public interface ${className}Mapper{
+    int save(${className} record);
+
+    List<${className}> selectByFilter(@Param("filterList") List<FilterVo> filterList);
+
+    //List<${className}> pageSelectByFilter(@Param("filterList") List<FilterVo> filterList, @Param("start")Integer start, @Param("pageSize") Integer pageSize);
+
+    Long countByFilter(@Param("filterList") List<FilterVo> filterList);
+}

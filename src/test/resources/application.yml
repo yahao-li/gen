@@ -1,0 +1,50 @@
+server:
+  port: 8080
+spring:
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: /static/**,classpath:/static/,classpath:/META-INF/resources/
+  datasource:
+    username: test
+    password: test
+    url: jdbc:mysql://192.168.131.43:3306/db_test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+#    type: com.alibaba.druid.pool.DruidDataSource
+    initiaSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECE 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    filters: stat,wall,log4j
+    maxPoolPrepareStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.centit.sys.mapper
+
+logging:
+  level:
+    com.lenovo.generation.mapper: debug
+
+generate:
+  author: wei_q
+  path:
+    controller: com.centit.cw.controller
+    dao: com.centit.cw.mapper
+    mapper: com.centit.cw.mapper
+    model: com.centit.cw.po
+    model.dto: com.centit.cw.po
+    model.vo: com.centit.cw.po
+    service: com.centit.cw.service
+    service.impl: com.centit.cw.service.impl

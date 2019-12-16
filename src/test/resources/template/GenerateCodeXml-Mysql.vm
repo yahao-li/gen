@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${mapperPath}.${className}Mapper">
+    <resultMap id="${className}Map" type="${modelPath}.${className}">
+        <!--author:${author} ${date}-->
+        #foreach($col in ${columns} )
+        #if($col.columnName == "id")
+        <id column="${col.columnName}" property="${col.javaName}" />
+        #else
+        <result column="${col.columnName}" property="${col.javaName}" />
+        #end
+        #end
+    </resultMap>
+
+    <sql id="base_table">
+        ${table}
+    </sql>
+
+    <sql id="base_column" >
+        #set($commaIndex = 0)
+        #foreach($col in ${columns} )#set($commaIndex = $commaIndex +1)#if(${col.columnName} != "isvalid")${col.columnName}#if($commaIndex  < $size),#end#end#end,isvalid
+    </sql>
+
+    <sql id="base_save_value" >
+        #set($commaIndex = 0)
+        #foreach($col in ${columns} )#set($commaIndex = $commaIndex +1)#if(${col.columnName} != "isvalid")#{model.${col.javaName},jdbcType=${col.jdbcType}}#if($commaIndex  < $size),#end#end#end,"Y"
+    </sql>
+
+    <sql id="base_update_value" >
+        <set>
+    #foreach($col in ${columns})
+        #if(${col.columnName} != "id" && ${col.jdbcType} == "TIMESTAMP")
+            <if test="model.${col.javaName} != null">
+                ${col.columnName} = #{model.${col.javaName},jdbcType=${col.jdbcType}},
+            </if>
+        #elseif(${col.columnName} != "id")
+            <if test="model.${col.javaName} != null and model.${col.javaName} != ''">
+                ${col.columnName} = #{model.${col.javaName},jdbcType=${col.jdbcType}},
+            </if>
+        #end
+    #end
+        </set>
+    </sql>
+
+    <sql id="query_condition" >
+        <where>
+        #foreach($col in ${columns})
+        #if(${col.columnName} != "isvalid" && ${col.jdbcType} == "TIMESTAMP")
+            <if test="model.${col.javaName} != null">
+                AND ${col.columnName} = #{model.${col.javaName},jdbcType=${col.jdbcType}}
+            </if>
+        #elseif(${col.columnName} != "isvalid")
+            <if test="model.${col.javaName} != null and model.${col.javaName} != ''">
+                AND ${col.columnName} = #{model.${col.javaName},jdbcType=${col.jdbcType}}
+            </if>
+        #end
+        #end
+            and isvalid = 'Y'
+        </where>
+    </sql>
+
+    <!-- 添加单条记录 -->
+    <insert id="save" parameterType="${modelPath}.${className}" >
+        insert into <include refid="base_table"/> (<include refid="base_column"/>) values (<include refid="base_save_value"/>)
+    </insert>
+
+    <!-- 添加多条记录 -->
+    <insert id="saveList" parameterType="java.util.List">
+        insert into <include refid="base_table"/> (<include refid="base_column"/>)
+        values
+        <foreach collection="models" item="model" separator=",">
+            (<include refid="base_save_value"/>)
+        </foreach>
+    </insert>
+
+    <!-- 更新单条记录 -->
+    <update id="update" parameterType="${modelPath}.${className}" >
+        update <include refid="base_table"/> <include refid="base_update_value"/> where id = #{model.id,jdbcType=VARCHAR} and isvalid = 'Y'
+    </update>
+
+    <!-- 批量更新 -->
+    <update id="updateList" parameterType="java.util.List">
+        <foreach collection="models" item="model" index="index" open="" close="" separator=";">
+            update <include refid="base_table"/> <include refid="base_update_value"/> <include refid="query_condition"/>
+        </foreach>
+    </update>
+
+    <!-- 根据id删除单条记录 -->
+    <update id="delete" parameterType="java.lang.String" >
+        UPDATE <include refid="base_table"/> SET isvalid = 'N' WHERE id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 根据条件删除单条或多条记录 -->
+    <update id="deleteByModel" parameterType="${modelPath}.${className}">
+        UPDATE <include refid="base_table"/> SET isvalid = 'N' <include refid="query_condition"/>
+    </update>
+    
+    <!--根据id查询单条记录  -->
+    <select id="getById" resultMap="${className}Map" parameterType="java.lang.String">
+        select
+        <include refid="base_column" />
+        from <include refid="base_table"/>
+        where id = #{id,jdbcType=VARCHAR} and isvalid = 'Y'
+    </select>
+
+    <!-- 根据查询条件查询单条记录  -->
+    <select id="getByModel" resultMap="${className}Map" parameterType="${modelPath}.${className}">
+        select <include refid="base_column"/>
+        from <include refid="base_table"/>
+        <include refid="query_condition"/>
+    </select>
+
+    <!-- 根据查询条件，查询列表 -->
+    <select id="queryList" resultMap="${className}Map" parameterType="${modelPath}.${className}">
+        select <include refid="base_column"/>
+        from <include refid="base_table"/>
+        <include refid="query_condition"/>
+    </select>
+
+    <!-- 根据查询条件和分页条件，查询列表(传入多个参数就不要指定参数) -->
+    <select id="queryListForPageModel" resultMap="${className}Map">
+        select <include refid="base_column"/>
+        from <include refid="base_table"/>
+        <include refid="query_condition"/>
+        limit #{page.index},#{page.length}
+    </select>
+
+    <!-- 根据查询条件查询总数 -->
+    <select id="queryCount" resultType="java.lang.Integer" parameterType="${modelPath}.${className}">
+        select count(id) from <include refid="base_table"/>
+        <include refid="query_condition"/>
+    </select>
+
+    <!-- 根据查询所有记录 -->
+    <select id="queryAll" resultMap="${className}Map">
+        select <include refid="base_column"/>
+        from <include refid="base_table"/>
+        where isvalid = 'Y'
+    </select>
+</mapper>
+

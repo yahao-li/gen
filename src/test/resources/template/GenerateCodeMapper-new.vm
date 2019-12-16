@@ -1,0 +1,10 @@
+package ${mapperPath};
+
+import com.centit.core.mapper.BaseMapper;
+import ${modelPath}.${className};
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface ${className}Mapper extends BaseMapper<${className},String > {
+
+}

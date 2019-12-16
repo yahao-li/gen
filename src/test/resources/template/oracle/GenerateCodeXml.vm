@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${mapperPath}.${className}Mapper">
+    <resultMap id="BaseResultMap" type="${modelPath}.${className}">
+        <!--author:${author} ${date}-->
+        #foreach($col in ${columns} )
+        #if($col.columnName == "id")
+        <id column="${col.columnName}" jdbcType="${col.jdbcType}" property="${col.javaName}" />
+        #else
+        <result column="${col.columnName}" jdbcType="${col.jdbcType}" property="${col.javaName}" />
+        #end
+        #end
+    </resultMap>
+
+    <insert id="save" parameterType="${modelPath}.${className}">
+        INSERT INTO ${table}
+        (#set($commaIndex = 0)
+        #foreach($col in ${columns} )#set($commaIndex = $commaIndex +1)#if(${col.columnName} != "id")${col.columnName}#if($commaIndex  < $size),#end#end#end)
+        VALUES
+        #set($commaIndex = 0)
+        (#foreach($col in ${columns} )#set($commaIndex = $commaIndex +1)#if(${col.javaName} != "id")#{${col.javaName}}#if($commaIndex  < $size),#end#end#end)
+    </insert>
+
+    <sql id="baseSql">
+        #set($commaIndex = 0)
+        #foreach($col in ${columns} )#set($commaIndex = $commaIndex +1) ${col.columnName}#if($commaIndex  < $size),#end #end
+    </sql>
+
+    <sql id="search">
+        #foreach($col in ${columns})
+
+        <if test="${col.javaName} != null and ${col.javaName} != ''">
+            AND ${col.columnName} = #{${col.javaName}}
+        </if>
+        #end
+    </sql>
+
+    <sql id="filterWhere">
+        <if test="filterList != null and filterList.size > 0">
+        <foreach collection="filterList" open="" separator=" " close="" item="filter">
+            AND ${filter.columnName} ${filter.op}
+            <choose>
+                <when test="filter.op == 'in'">
+                    <foreach collection="filter.value" open="(" separator="," close=")" item="value">
+                        #{value}
+                    </foreach>
+                </when>
+                <otherwise>
+                    <foreach collection="filter.value" open="" separator="," close="" item="value">
+                        #{value}
+                    </foreach>
+                </otherwise>
+            </choose>
+        </foreach>
+        </if>
+    </sql>
+
+    <select id="selectByFilter" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseSql"/>
+        from ${table}
+        <where>
+            <include refid="filterWhere"/>
+        </where>
+    </select>
+
+    <select id="countByFilter" resultType="long">
+        SELECT
+        count(1)
+        from ${table}
+        <where>
+            <include refid="filterWhere"/>
+        </where>
+    </select>
+</mapper>
+

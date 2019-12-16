@@ -1,0 +1,13 @@
+package ${voPath};
+import ${modelPath}.${className};
+import javax.persistence.*;
+import java.util.Date;
+import lombok.Data;
+
+/**
+* Create by  ${author} ${date}
+*/
+@Data
+public class ${className}VO extends ${className}{
+
+}

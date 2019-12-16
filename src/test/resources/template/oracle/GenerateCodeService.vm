@@ -1,0 +1,12 @@
+package ${servicePath};
+
+import ${modelPath}.${className};
+import ${modelPath}.${className}Filter;
+import java.util.List;
+
+public interface ${className}Service{
+
+    List<${className}> selectByFilter(${className}Filter ${tableName}Filter);
+
+    Long countByFilter(${className}Filter ${tableName}Filter);
+}

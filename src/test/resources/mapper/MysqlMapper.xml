@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.centit.demo.mapper.MysqlMapper">
+
+  <select id="getDataTables" resultType="java.lang.String">
+    show databases
+  </select>
+
+  <select id="getTables" resultType="java.lang.String">
+    SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = #{schemaName}
+  </select>
+
+  <select id="getColumns" resultType="com.centit.demo.model.BaseTableColumn">
+    select COLUMN_NAME columnName,COLUMN_COMMENT remarks,COLUMN_type columnType  from INFORMATION_SCHEMA.Columns where table_name=#{table}
+    and table_schema = #{schemaName}
+  </select>
+</mapper>

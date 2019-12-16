@@ -1,0 +1,120 @@
+package ${controllerPath};
+
+import com.alibaba.fastjson.JSONArray;
+import com.centit.core.controller.BaseController;
+import com.centit.core.mapper.PageImpl;
+import com.centit.core.mapper.Pageable;
+import com.centit.core.util.CommonUtil;
+import com.centit.core.security.CustomUserDetails;
+import ${modelPath}.${className};
+import ${servicePath}.${className}Service;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.Date;
+
+/**
+* @author : ${author}
+* @date: ${date}
+* @Description: XXX接口
+*/
+@Api(description = "XXXAPI")
+@RestController
+@RequestMapping("/sysapi/${pathName}")
+public class ${className}Controller<main> extends BaseController {
+    private static final Logger log = LoggerFactory.getLogger(${className}Controller.class);
+
+    @Resource
+    private ${className}Service ${tableName}Service;
+
+    @ApiOperation(value = "查询接口", notes = "根据XXXid查询XXX信息")
+    @ApiImplicitParam(name = "id", value = "XXXid", dataType = "String")
+    @GetMapping
+    public Object find${className}(@RequestParam(required = true) String id) {
+        try {
+            ${className} ${tableName} = ${tableName}Service.getById(id);
+            return this.initData(dictionaryUtil.objectToJSON(${tableName}));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return this.initData("XXX信息查询失败");
+        }
+    }
+
+    @ApiOperation(value = "XXX信息保存接口", notes = "保存XXX信息")
+    @ApiImplicitParam(name = "${tableName}", value = "XXX对象", dataType = "${className}")
+    @PostMapping
+    public Object save${className}(@RequestBody @Valid ${className} ${tableName}, BindingResult result, HttpServletRequest request) {
+        String userId = this.queryUserId(request);
+        if (result.hasErrors()) {
+            return this.initData(result);
+        }
+        try {
+            ${tableName}.setId(CommonUtil.getUUID());
+            ${tableName}.setCreateuser(userId);
+            ${tableName}.setCreatetime(new Date());
+            ${tableName}.setUpdateuser(userId);
+            ${tableName}.setUpdatetime(new Date());
+            ${tableName}Service.save(${tableName});
+            return this.initData();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return this.initData("XXX信息保存失败");
+        }
+    }
+
+    @ApiOperation(value = "XXX信息更新接口", notes = "更新XXX信息")
+    @ApiImplicitParam(name = "${tableName}", value = "XXX对象", dataType = "${className}")
+    @PutMapping
+    public Object update${className}(@RequestBody ${className} ${tableName},HttpServletRequest request) {
+        try {
+            ${tableName}.setUpdateuser(this.queryUserId(request));
+            ${tableName}.setUpdatetime(new Date());
+            ${tableName}Service.update(${tableName});
+            return this.initData();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return this.initData("XXX信息保存失败");
+        }
+    }
+
+    @ApiOperation(value = "XXX信息删除接口", notes = "删除XXX信息")
+    @ApiImplicitParam(name = "id", value = "XXXid", dataType = "String", paramType = "path")
+    @DeleteMapping
+    public Object delete${className}(@RequestParam(required = true) String id) {
+        try {
+            ${tableName}Service.delete(id);
+            return this.initData();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return this.initData("XXX信息删除失败");
+        }
+    }
+
+    @ApiOperation(value = "XXX查询接口", notes = "根据XXX查询XXX信息分页列表")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "current", value = "当前页数", dataType = "int"),
+        @ApiImplicitParam(name = "size", value = "每页记录数", dataType = "int"),
+        @ApiImplicitParam(name = "${tableName}", value = "XXX对象", dataType = "${className}")
+    })
+    @PostMapping(value = "/list")
+    public Object find${className}Page(@RequestParam(required = true) int current, @RequestParam(required = true) int size, @RequestBody ${className} ${tableName}) {
+        try {
+            PageImpl<${className}>  ${tableName}Page = ${tableName}Service.queryListForPageModel(${tableName}, new Pageable(current, size));
+            PageImpl<JSONArray> objImpl = dictionaryUtil.pageToJSONArray(${tableName}Page);
+            return this.initData(objImpl);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return this.initData("XXX信息查询失败");
+        }
+    }
+
+}

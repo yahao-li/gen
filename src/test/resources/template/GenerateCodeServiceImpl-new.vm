@@ -1,0 +1,28 @@
+package ${serviceImpPath};
+
+import com.centit.core.mapper.BaseMapper;
+import com.centit.core.service.impl.BaseServiceImpl;
+import ${mapperPath}.${className}Mapper;
+import ${modelPath}.${className};
+import ${servicePath}.${className}Service;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+* @author : ${author}
+* @date: ${date}
+* @Description: XXX接口
+*/
+@Service
+public class ${className}ServiceImpl extends BaseServiceImpl<${className},String> implements ${className}Service {
+
+    @Resource
+    private ${className}Mapper ${tableName}Mapper;
+
+    @Override
+    public BaseMapper<${className}, String> getMapper() {
+        return this.${tableName}Mapper;
+    }
+
+}
