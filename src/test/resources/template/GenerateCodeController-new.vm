@@ -27,7 +27,7 @@ import java.util.Date;
 * @date: ${date}
 * @Description: XXX接口
 */
-@Api(description = "XXXAPI")
+@Api(value = "XXXAPI")
 @RestController
 @RequestMapping("/sysapi/${pathName}")
 public class ${className}Controller<main> extends BaseController {
